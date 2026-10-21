@@ -1,0 +1,48 @@
+name: Autonomous README Updater
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  update-readme:
+    # Runs on EVERY commit you push, but skips the bot's own automated commit
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Agent Dependencies
+        run: pip install openai
+
+      - name: Run README Agent
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python scripts/auto_readme.py
+
+      - name: Commit and Push Updated README
+        run: |
+          git config --global user.name "IQR - AutoREADME [BOT]"
+          git config --global user.email "iqroguerex@gmail.com"
+          
+          git add README.md
+          if git diff --staged --quiet; then
+            echo "No changes needed in README.md."
+          else
+            git commit -m "docs: auto-update README.md via Autonomous Agent [skip ci]"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
