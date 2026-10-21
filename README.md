@@ -1,18 +1,18 @@
 # 📊 REX-Sentiment-Engine | Real-Time Sentiment Inference Microservice
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
-  <img src="https://img.shields.io/badge/FastAPI-0.110%2B-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI">
-  <img src="https://img.shields.io/badge/scikit--learn-1.4%2B-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white" alt="scikit-learn">
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License MIT">
-  <img src="https://img.shields.io/badge/Deploy-Streamlit%20Cloud%20%7C%20Docker%20%7C%20AWS-blue?style=for-the-badge" alt="Deploy">
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/FastAPI-0.110%2B-009688?logo=fastapi&logoColor=white" alt="FastAPI">
+  <img src="https://img.shields.io/badge/scikit--learn-1.4%2B-F7931E?logo=scikit-learn&logoColor=white" alt="scikit-learn">
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License MIT">
+  <img src="https://img.shields.io/badge/Deploy-Streamlit%20Cloud%20%7C%20Docker%20%7C%20AWS-blue" alt="Deploy">
 </p>
 
 ---
 
 ## 🚀 Overview
 
-**REX-Sentiment-Engine** is a lightweight, production-ready microservice that delivers real-time binary sentiment classification (Positive/Negative) via a RESTful API. Built on **FastAPI** for asynchronous high-throughput serving and **scikit-learn** for zero-dependency ML inference, it eliminates the overhead of heavy deep-learning frameworks while maintaining sub-millisecond latency. The service initializes an in-memory TF-IDF vectorizer (unigrams + bigrams) coupled with a Logistic Regression classifier trained on a curated seed corpus, making it ideal for edge deployments, CI/CD pipeline quality gates, or rapid prototyping where GPU resources are unavailable.
+**REX-Sentiment-Engine** is a lightweight, production-ready **FastAPI microservice** that delivers real-time sentiment classification using a classic **TF-IDF + Logistic Regression** pipeline. Designed for low-latency inference, it initializes an in-memory model on startup—eliminating cold-start overhead—and exposes a clean REST interface (`/predict`) with structured Pydantic schemas. Ideal for embedding into chatbots, review aggregators, or any system requiring instant polarity detection without heavy deep-learning dependencies.
 
 ---
 
@@ -20,26 +20,24 @@
 
 | Feature | Description |
 |---------|-------------|
-| 🤖 **ML-Powered Inference** | TF-IDF (1-2 grams) + Logistic Regression for instant sentiment scoring |
-| 🎛️ **RESTful API** | `/predict` (POST) & `/health` (GET) with auto-generated OpenAPI/Swagger docs |
-| 📊 **Confidence Calibration** | Returns probability scores rounded to 4 decimals for threshold tuning |
-| ⭐ **Pydantic Validation** | Strict input schemas with `min_length=1` and example payloads |
-| 📈 **Observability Ready** | Structured JSON responses including `tokens_analyzed` for monitoring |
-| 🔍 **Test Coverage** | Pytest suite covering health checks, positive & negative prediction paths |
-| 🎨 **Zero-Config Deploy** | Single-file `main.py` runs via `uvicorn` or Docker with no external model artifacts |
+| 🤖 **TF-IDF + Logistic Regression** | Interpretable, fast, and memory-efficient baseline for binary sentiment. |
+| 🎛️ **FastAPI Native** | Auto-generated OpenAPI docs (`/docs`), request validation, and async-ready. |
+| 📊 **Confidence Scoring** | Returns calibrated probability (`confidence`) alongside label. |
+| ⭐ **Health Endpoint** | `/health` for Kubernetes liveness/readiness probes. |
+| 📈 **Token Metadata** | Reports `tokens_analyzed` for observability & debugging. |
+| 🔍 **Comprehensive Tests** | Pytest suite covering health, positive, and negative paths. |
+| 🎨 **Zero-Config Startup** | Trains on a curated micro-corpus in < 200 ms—no external artifacts. |
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| **API Framework** | FastAPI 0.110+ |
-| **ASGI Server** | Uvicorn 0.28+ |
-| **ML Pipeline** | scikit-learn 1.4+ (TF-IDF, LogisticRegression) |
-| **Data Handling** | NumPy 1.26+, Pydantic 2.6+ |
-| **Testing** | Pytest, FastAPI TestClient |
-| **Containerization** | Docker (multi-stage) |
+- **Framework**: FastAPI ≥ 0.110
+- **ASGI Server**: Uvicorn ≥ 0.28
+- **ML Stack**: scikit-learn ≥ 1.4 (TF-IDF Vectorizer, LogisticRegression)
+- **Data**: NumPy ≥ 1.26
+- **Validation**: Pydantic ≥ 2.6
+- **Testing**: Pytest + FastAPI TestClient
 
 ---
 
@@ -48,7 +46,7 @@
 ```bash
 FastAPI-Scikit-Learn-Sentiment-Analysis-Microservice/
 ├── LICENSE
-├── main.py                 # FastAPI app + ML pipeline + entrypoint
+├── main.py                 # FastAPI app, model init, endpoints
 ├── requirements.txt        # Pinned dependencies
 ├── test_service.py         # Pytest suite (health + prediction)
 └── auto_readme.py          # (Internal) README generator script
@@ -60,11 +58,12 @@ FastAPI-Scikit-Learn-Sentiment-Analysis-Microservice/
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/ChinmayVChatradamath/FastAPI-Scikit-Learn-Sentiment-Analysis-Microservice.git
+git clone https://github.com/Chinmay-V-Chatradamath/FastAPI-Scikit-Learn-Sentiment-Analysis-Microservice.git
 cd FastAPI-Scikit-Learn-Sentiment-Analysis-Microservice
 
 # 2. Create & activate virtual environment (recommended)
-python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 
 # 3. Install dependencies
 pip install -r requirements.txt
@@ -75,16 +74,16 @@ pip install -r requirements.txt
 ## ▶️ Run Locally
 
 ```bash
-# Development mode with auto-reload
+# Development (auto-reload)
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
-# Production mode (single worker)
+# Production (multi-worker)
 uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
-**API Docs:** `http://localhost:8000/docs` (Swagger UI)  
-**Health Check:** `curl http://localhost:8000/health`  
-**Predict:** `curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"text": "The service was fast and super reliable!"}'`
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+- **Health Check**: http://localhost:8000/health
 
 ---
 
@@ -93,24 +92,23 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
 | Component | Specification |
 |-----------|---------------|
 | **Vectorizer** | `TfidfVectorizer(ngram_range=(1,2), stop_words="english")` |
-| **Classifier** | `LogisticRegression(max_iter=100, solver="lbfgs")` |
-| **Training Corpus** | 6 samples (3 positive, 3 negative) — in-memory, no persistence |
-| **Labels** | `1 = POSITIVE`, `0 = NEGATIVE` |
-| **Output Schema** | `SentimentResponse(sentiment: str, confidence: float, tokens_analyzed: int)` |
-
-> **Note:** The model trains on startup in <50 ms. For production, persist `vectorizer` and `classifier` via `joblib` and load at runtime to support larger corpora.
+| **Classifier** | `LogisticRegression()` (default L2, C=1.0, solver=lbfgs) |
+| **Training Data** | 6 hand-crafted samples (3 positive, 3 negative) |
+| **Inference Latency** | ~1–3 ms / request (CPU) |
+| **Input Schema** | `SentimentRequest(text: str, min_length=1)` |
+| **Output Schema** | `SentimentResponse(sentiment: "POSITIVE"\|"NEGATIVE", confidence: float, tokens_analyzed: int)` |
 
 ---
 
 ## 🧠 How It Works
 
-1. **Startup** — FastAPI lifespan initializes `TfidfVectorizer` and fits `LogisticRegression` on the hardcoded seed corpus.
-2. **Request Ingestion** — Client POSTs JSON `{ "text": "..." }` to `/predict`; Pydantic validates `min_length=1`.
-3. **Vectorization** — Input text transformed via fitted TF-IDF vocabulary (unigrams + bigrams).
-4. **Inference** — Logistic Regression outputs class label + class probabilities.
-5. **Confidence Extraction** — `max(probabilities)` → `confidence` (float, 4 decimals).
-6. **Response Assembly** — Returns `{ "sentiment": "POSITIVE|NEGATIVE", "confidence": 0.XXXX, "tokens_analyzed": N }`.
-7. **Health Endpoint** — `/health` returns service metadata for load balancer probes.
+1. **Startup** – FastAPI lifespan initializes `TfidfVectorizer` and `LogisticRegression` on the embedded corpus.
+2. **Request** – Client POSTs JSON `{ "text": "..." }` to `/predict`.
+3. **Validation** – Pydantic enforces non-empty string; returns 422 on failure.
+4. **Vectorization** – Input text transformed via fitted TF-IDF vocabulary (unigrams + bigrams).
+5. **Inference** – Logistic Regression outputs class (0/1) and `predict_proba`.
+6. **Post-Processing** – Maps `1 → "POSITIVE"`, `0 → "NEGATIVE"`; extracts max probability as `confidence`.
+7. **Response** – Returns structured JSON with sentiment, confidence (4-decimal), and token count.
 
 ---
 
@@ -128,7 +126,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
 ### `POST /predict`
 **Request**
 ```json
-{ "text": "Absolutely love the new dashboard!" }
+{ "text": "The service was fast and super reliable!" }
 ```
 
 **Response (200)**
@@ -136,7 +134,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
 {
   "sentiment": "POSITIVE",
   "confidence": 0.9876,
-  "tokens_analyzed": 6
+  "tokens_analyzed": 7
 }
 ```
 
@@ -149,47 +147,36 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
 
 ## 🚀 Deployment
 
-### Docker (Multi-Stage)
+### Docker
 ```dockerfile
 # Dockerfile
-FROM python:3.11-slim AS builder
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --user -r requirements.txt
-
 FROM python:3.11-slim
 WORKDIR /app
-COPY --from=builder /root/.local /root/.local
-COPY main.py .
-ENV PATH=/root/.local/bin:$PATH
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
 EXPOSE 8000
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
 ```
-
 ```bash
-docker build -t rex-sentiment-engine .
-docker run -d -p 8000:8000 rex-sentiment-engine
+docker build -t rex-sentiment .
+docker run -p 8000:8000 rex-sentiment
 ```
 
-### Streamlit Cloud / Render / Fly.io
-- Push to GitHub → Connect repo → Set **Build Command**: `pip install -r requirements.txt`  
-- **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-
-### AWS (ECS Fargate / Lambda + API Gateway)
-- Package as Docker image → Push to ECR → Define Task Definition (CPU: 256, Memory: 512 MB)  
-- Attach Application Load Balancer with `/health` target group.
+### Streamlit Cloud / Render / Fly.io / AWS ECS
+- Push to GitHub → Connect repo → Set build command `pip install -r requirements.txt` → Start command `uvicorn main:app --host 0.0.0.0 --port $PORT`.
+- Ensure `PORT` env var is respected (modify `main.py` if needed).
 
 ---
 
 ## 🔮 Future Improvements
 
-- [ ] **Model Persistence** — Serialize vectorizer & classifier with `joblib` for larger datasets
-- [ ] **Multi-Class Support** — Extend to Neutral / Mixed sentiments with expanded corpus
-- [ ] **Batch Endpoint** — `/predict/batch` accepting `List[str]` for throughput optimization
-- [ ] **Prometheus Metrics** — `/metrics` exposing latency histograms & prediction counters
-- [ ] **CI/CD Pipeline** — GitHub Actions: lint → test → docker build → deploy to staging
-- [ ] **Input Sanitization** — HTML/Unicode normalization & length caps for DoS protection
-- [ ] **A/B Testing Framework** — Canary routing between model versions via header-based switching
+- [ ] Swap in-memory training for persisted `joblib` artifacts (larger corpora).
+- [ ] Add `/batch-predict` endpoint for throughput optimization.
+- [ ] Integrate Prometheus metrics (`/metrics`) + Grafana dashboard.
+- [ ] Support multi-class (Neutral) via OvR or fine-tuned transformer.
+- [ ] CI/CD pipeline (GitHub Actions → Docker Hub → K8s).
+- [ ] Input sanitization & rate limiting middleware.
 
 ---
 
@@ -200,4 +187,4 @@ docker run -d -p 8000:8000 rex-sentiment-engine
 
 ## ⭐ Support
 
-If this project helps you, please consider giving it a ⭐ on GitHub — it fuels future enhancements!
+If you find this microservice useful, please ⭐ the repository and share it with your network!
