@@ -37,7 +37,7 @@ jobs:
       - name: Commit and Push Updated README
         run: |
           git config --global user.name "IQR - AutoREADME [BOT]"
-          git config --global user.email "iqroguerex@gmail.com"
+          git config --global user.email "example@gmail.com"
           
           git add README.md
           if git diff --staged --quiet; then
